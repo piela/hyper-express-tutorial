@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "app": "ts-node-dev --respawn --transpile-only src/index.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/infra/http/index.ts",
     "console": "ts-node-dev  --transpile-only src/infra/console/index.ts"
   },

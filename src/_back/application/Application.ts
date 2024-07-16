@@ -1,5 +1,5 @@
-import CommandBus from "./CommandBus";
-import { CreateUserCommand } from "./Commands";
+import CommandBus from "../../shared/CommandBus";
+import { CreateUserCommand } from "../../shared/Commands";
 import { CreateUserCommandHandler } from "./CommandHandlers/CreateUserCommandHandler";
 
 

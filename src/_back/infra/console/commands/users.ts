@@ -1,5 +1,7 @@
 import { Command } from "commander";
-import { CreateUserCommand } from "../../../application/Commands";
+import { CreateUserCommand } from "../../../_back/application/Commands";
+
+
 export  function login(application: any) {
   const command = new Command("login")
     .description("Greet someone with their first and last name")

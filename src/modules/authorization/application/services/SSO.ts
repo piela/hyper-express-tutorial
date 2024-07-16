@@ -1,4 +1,4 @@
-export default class KeycloakSystem {
+export default class SSO {
     private keycloakUrl: string;
     private adminRealm: string;
     private adminClientId: string;

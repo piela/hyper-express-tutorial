@@ -1,7 +1,7 @@
 const { program } = require('commander');
-import CommandBus from "../../application/CommandBus";
+import CommandBus from "../../_back/application/CommandBus";
 import Application from "../../application/Application";
-import {login,createUser} from "./commands/User";
+import {login,createUser} from "./commands/users";
 const application=new Application(new CommandBus());
 application.start();
 const console=program;

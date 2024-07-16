@@ -1,6 +1,6 @@
 import { Router } from "hyper-express";
-import logger from "../../../logger";
-import { CreateUserCommand } from "../../../application/Commands";
+import logger from "../../../../shared/logger";
+import { CreateUserCommand } from "../../../_back/application/Commands";
 const userRouter = new Router();
 
 userRouter.get("/", async (req, res, next) => {

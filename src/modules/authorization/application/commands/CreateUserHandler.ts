@@ -1,10 +1,15 @@
-import { ICommandHandler } from "../ICommandHandler";
-import { CreateUserCommand } from "../Commands";
+import { ICommandHandler } from "../../../../shared/ICommandHandler";
+import { CreateUserCommand } from "./Commands";
 import Joi, { IpOptions } from "joi";
-import { IPersistance } from "../Application";
+import Email from "../../domain/entities/Email";
+import User from "../../domain/entities/User";
 
-import Email from "../../domain/Email";
-import User from "../../domain/User";
+
+interface IPersistance{
+
+  save(object: any):void;
+
+}
 
 const schema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
@@ -35,7 +40,7 @@ class ValidationError extends Error {
   }
 }
 
-export class CreateUserCommandHandler
+export class CreateUserHandler
   implements ICommandHandler<CreateUserCommand, void>
 {
   constructor(readonly persistance: IPersistance) {}
