@@ -1,4 +1,5 @@
 import Authorization from "./modules/authorization/authorization.module";
+import WorkspaceSetup from "./modules/wokrspaceSetup/workspaceSetup.module";
 import CommandBus from "./shared/CommandBus";
 import QueryBus from "./shared/QueryBus";
 //import { CreateUserCommandHandler } from "./CommandHandlers/CreateUserCommandHandler";
@@ -33,6 +34,7 @@ export default class Application {
   start() {  
    
      new Authorization(this.commandBus,this.queryBus).start();
+     new WorkspaceSetup(this.commandBus,this.queryBus).start();
 
 
     // this.commandBus.registerHandler(

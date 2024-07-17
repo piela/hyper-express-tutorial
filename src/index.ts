@@ -4,6 +4,7 @@ import Application from "./Application";
 import { Server } from "hyper-express";
 import logger from "./shared/logger";
 import userRegister from "./modules/authorization/infrastructure/http/index"
+import workspaceRegister from "./modules/wokrspaceSetup/infrastructure/http/index"
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -22,7 +23,9 @@ server.use((req, res, next) => {
   next();
 });
 
-userRegister(server)
+userRegister(server);
+workspaceRegister(server);
+
 server.get("/", (req, res) => {
   res.send("Hello, World!");
   logger.info("Response sent for /");
