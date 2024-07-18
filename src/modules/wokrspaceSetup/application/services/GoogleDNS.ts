@@ -11,7 +11,7 @@ class GoogleDNS {
 
   //dodać typ zwracany
   async addDnsRecord() {
-    const url = `https://dns.googleapis.com/dns/v1/projects/${projectId}/managedZones/${managedZone}/changes?key=${apiKey}`;
+    const url = `https://dns.googleapis.com/dns/v1/projects/${this.projectId}/managedZones/${this.managedZone}/changes?key=${this.apiKey}`;
 
     const data = {
       additions: [
