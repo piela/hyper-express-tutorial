@@ -1,6 +1,7 @@
 import { Router } from "hyper-express";
 import logger from "../../../../../shared/logger";
 import { CreateWorkspaceCommand } from "../../../application/commands/Commands";
+import ValidationError from "../../../../../shared/Errors/ValidationError";
 
 const workspaceRouter = new Router();
 
@@ -30,10 +31,16 @@ workspaceRouter.post("/", async (req, res) => {
     await app
       .getCommandBus()
       .execute(new CreateWorkspaceCommand(data.domainName));
-    res.status(201).json({ message: "Workspace created"});
+      const message=`Workspace created`
+      logger.info(message);
+      res.status(201).json({ message: message });
   } catch (err: any) {
     logger.error(err.message);
-    res.status(400).json({ message: "validation Error" });
+    if (err instanceof ValidationError) {
+      res.status(400).json({ message: "validation Error" });
+    } else {
+      res.status(400).json({ message: err.message });
+    }
   }
 });
 

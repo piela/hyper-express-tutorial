@@ -16,7 +16,9 @@ const logger = createLogger({
     new transports.Console({
       format: format.combine(
         format.colorize(),
-        format.simple()
+        logFormat
+
+    
       )
     })
   ],

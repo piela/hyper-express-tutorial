@@ -3,8 +3,8 @@ import QueryBus from "./shared/QueryBus";
 import Application from "./Application";
 import { Server } from "hyper-express";
 import logger from "./shared/logger";
-import userRegister from "./modules/authorization/infrastructure/http/index"
-import workspaceRegister from "./modules/wokrspaceSetup/infrastructure/http/index"
+import userRegister from "./modules/authorization/infrastructure/http/index";
+import workspaceRegister from "./modules/wokrspaceSetup/infrastructure/http/index";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -19,16 +19,20 @@ server.use((req, res, next) => {
 });
 
 server.use((req, res, next) => {
-  logger.info(`Incoming request: ${req.method} ${req.url}`);
+  logger.info(`Request: ${req.method} ${req.url}`);
   next();
 });
-
 userRegister(server);
 workspaceRegister(server);
 
 server.get("/", (req, res) => {
   res.send("Hello, World!");
   logger.info("Response sent for /");
+});
+
+server.any("/*", (req, resp) => {
+  logger.error(`Error 404, route not found: ${req.method} ${req.url}`);
+  resp.status(404).send("Error: Route not found.");
 });
 
 server.set_error_handler((req, res, error) => {
