@@ -1,7 +1,8 @@
 import { ICommand } from './ICommand';
+import ICommandBus from './ICommandBus';
 import { ICommandHandler } from './ICommandHandler';
 
-export default class CommandBus  {
+export default class CommandBus implements ICommandBus  {
   private handlers = new Map<string, ICommandHandler<ICommand, any>>();
 
   public registerHandler<TCommand extends ICommand, TResult>(

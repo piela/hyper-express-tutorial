@@ -1,37 +1,64 @@
 import { preferences } from "joi";
 import CommandBus from "../../shared/CommandBus";
 import QueryBus from "../../shared/QueryBus";
-import { CreateWorkspaceCommand } from "./application/commands/Commands";
+import { CreateUserCommand, CreateWorkspaceCommand } from "./application/commands/Commands";
 import { CreateWorkspaceHandler } from "./application/commands/CreateWorkspaceHandler";
-/////////////////////////////////////////////////
+import { CreateUserHandler } from "./application/commands/CreateUserHandler";
 
-// /////temporary
-// export interface IPersistance {
-//   save(item: any): any;
-//   registerRepository(repository: IRepository):void;
-// }
+import ICommandBus from "../../shared/ICommandBus";
+import IQueryBus from "../../shared/IQueryBus";
+import SSO from "./application/services/SSO";
+import dotenv from "dotenv";
+import { IPasswordValidationStrategy } from "./domain/entities/Password";
+dotenv.config();
 
-class IRepository {}
+const env = process.env;
+const sso = new SSO(
+  env.KEYCLOAK_URL as string,
+  env.KEYCLOAK_ADMIN_REALM as string,
+  env.KEYCLOAK_ADMIN_CLIENT_ID as string,
+  env.KEYCLOAK_ADMIN_CLIENT_SECRET as string
+);
 
-export class Persistance {
-  constructor(private connection: any) {}
-
-  registerRepository(repository: IRepository) {}
-  save(item: any) {
-    console.log("obiekt zapisany: " + JSON.stringify(item));
-  }
+class PasswordStrategy implements IPasswordValidationStrategy {
+  constructor(
+    readonly minLength: number,
+    readonly requireUppercase: boolean,
+    readonly requireLowercase: boolean,
+    readonly requireDigit: boolean,
+    readonly requireSpecialChar: boolean
+  ) {}
 }
 
-const connection = null;
+function strToBool(value: string): boolean {
+  if (value.toLowerCase() === "true") {
+    return true;
+  } else if (value.toLowerCase() === "false") {
+    return false;
+  } 
+  else
+  { throw new Error(`Value is nor "true" or "false"`)}
+}
 
-const persistance = new Persistance(connection);
-////
+const passwordStrategy=new PasswordStrategy(
+  parseInt(env.PASSWORD_MIN_LENGTH!),
+  strToBool(env.PASSWORD_MIN_ONE_UPPERCASE!),
+  strToBool(env.PASSWORD_MIN_ONE_LOWERCASE!),
+  strToBool(env.PASSWORD_MIN_ONE_SPECIAL!),
+  strToBool(env.PASSWORD_MIN_ONE_NUMBER!)
+);
+
 export default class WorkspaceSetup {
-  constructor(readonly commandBus: CommandBus, readonly queryBus: QueryBus) {}
+  constructor(readonly commandBus: ICommandBus, readonly queryBus: IQueryBus) {}
   start() {
     this.commandBus.registerHandler(
       CreateWorkspaceCommand,
-      new CreateWorkspaceHandler(persistance)
+      new CreateWorkspaceHandler(sso)
+    );
+
+    this.commandBus.registerHandler(
+      CreateUserCommand,
+      new CreateUserHandler(sso,passwordStrategy)
     );
     console.log("Module Wrokspace registered");
   }

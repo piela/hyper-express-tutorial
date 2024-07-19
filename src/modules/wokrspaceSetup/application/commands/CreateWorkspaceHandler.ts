@@ -1,8 +1,8 @@
 import { ICommandHandler } from "../../../../shared/ICommandHandler";
-import SSO from "../services/SSO";
 import { CreateWorkspaceCommand } from "./Commands";
 import Joi from "joi";
 import ValidationError from "../../../../shared/Errors/ValidationError";
+import ISSO from "../services/ISSO";
 
 const schema = Joi.string()
   .pattern(/^(?=.{1,253}$)((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,63}$/)
@@ -16,10 +16,12 @@ const schema = Joi.string()
 export class CreateWorkspaceHandler
   implements ICommandHandler<CreateWorkspaceCommand, void>
 {
-  constructor() {}
+  constructor(readonly sso:ISSO) {}
 
   async handle(command: CreateWorkspaceCommand): Promise<void> {
-    const domainName = command.domianName;
+    
+    const domainName = command.domainName;
+    console.log(domainName);
     this.validate(domainName);
     await this.createDNSDomain(domainName);
     await this.configureRealm(domainName);
@@ -33,23 +35,19 @@ export class CreateWorkspaceHandler
 
 
   protected async configureRealm(domainName: string) {
-    const env = process.env;
-    const sso = new SSO(
-      env.KEYCLOAK_URL as string,
-      env.KEYCLOAK_ADMIN_REALM as string,
-      env.KEYCLOAK_ADMIN_CLIENT_ID as string,
-      env.KEYCLOAK_ADMIN_CLIENT_SECRET as string
-    );
+    
+
+    console.log("ddfd"+domainName)
 
     const roles = ["Admin", "Agent", "Supervisor"];
     const clientName = "www-client";
 
-    const realmExists = await sso.realmExists(domainName);
+    const realmExists = await this.sso.realmExists(domainName);
     if (!realmExists) {
-      await sso.createRealm(domainName);
-      const clientUuid = await sso.createClient(domainName, clientName);
-      await sso.assignClientRoles(domainName, clientUuid, roles);
-      await sso.createMapper(domainName, clientUuid);
+      await this.sso.createRealm(domainName);
+      const clientUuid = await this.sso.createClient(domainName, clientName);
+      await this.sso.assignClientRoles(domainName, clientUuid, roles);
+     // await this.sso.createMapper(domainName, clientUuid);
     } else {
       throw new Error("Realm already exists");
     }

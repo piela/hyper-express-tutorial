@@ -1,20 +1,40 @@
-export default class SSO {
-  private keycloakUrl: string;
-  private adminRealm: string;
-  private adminClientId: string;
-  private adminClientSecret: string;
-  private accessToken: string | null = null;
+import Joi from "joi";
+import ValidationError from "../../../../shared/Errors/ValidationError";
+import Email from "../../domain/entities/Email";
+import Password from "../../domain/entities/Password";
+const schema = Joi.object({
+  keycloakUrl: Joi.string().required().messages({
+    "any.required": "keycloakUrl is a required field",
+  }),
+  adminRealm: Joi.string().required().messages({
+    "any.required": "adminRealm is a required field",
+  }),
+  adminClientId: Joi.string().required().messages({
+    "any.required": "adminClientId is a required field",
+  }),
+  adminClientSecret: Joi.string().required().messages({
+    "any.required": "adminClientSecret is a required field",
+  }),
+});
 
+export default class SSO {
   constructor(
-    keycloakUrl: string,
-    adminRealm: string,
-    adminClientId: string,
-    adminClientSecret: string
+    readonly keycloakUrl: string,
+    readonly adminRealm: string,
+    readonly adminClientId: string,
+    readonly adminClientSecret: string
   ) {
-    this.keycloakUrl = keycloakUrl;
-    this.adminRealm = adminRealm;
-    this.adminClientId = adminClientId;
-    this.adminClientSecret = adminClientSecret;
+    this.validate(this);
+  }
+
+  private validate(sso: object): void {
+    const { error } = schema.validate(sso, {
+      abortEarly: false,
+    });
+    if (error) {
+      const validationErrors = error.details.map((detail) => detail.message);
+      throw new ValidationError(validationErrors);
+    }
   }
 
   private async getAccessToken(): Promise<string> {
@@ -23,7 +43,6 @@ export default class SSO {
     // }
 
     try {
-   
       const response = await fetch(
         `${this.keycloakUrl}/realms/${this.adminRealm}/protocol/openid-connect/token`,
         {
@@ -46,7 +65,7 @@ export default class SSO {
       }
 
       const data = await response.json();
-      this.accessToken = data.access_token;
+      data.access_token;
       return data.access_token;
     } catch (error: any) {
       console.error(`Error in getAccessToken: ${error.message}`);
@@ -99,6 +118,54 @@ export default class SSO {
     } catch (error: any) {
       throw error;
     }
+  }
+
+  async createUser(
+    realmName: string,
+    username: string,
+    firstName: string,
+    lastName: string,
+    email: Email,
+    password: Password
+  ): Promise<boolean> {
+    const createUserUrl = `${this.keycloakUrl}/admin/realms/${realmName}/users`;
+    const userData = {
+      username: "new-username",
+      enabled: true,
+      firstName: "First",
+      lastName: "Last",
+      email: "email@example.com",
+      credentials: [
+        {
+          type: "password",
+          value: "password",
+          temporary: false,
+        },
+      ],
+    };
+
+
+    const token=this.getAccessToken();
+    const response = await fetch(createUserUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `Error creating user: ${response.status} ${
+          response.statusText
+        } - ${JSON.stringify(errorData)}`
+      );
+    }
+
+    console.log("User created successfully");
+    return true;
   }
 
   public async createClient(

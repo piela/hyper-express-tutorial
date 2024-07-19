@@ -1,6 +1,8 @@
 import Authorization from "./modules/authorization/authorization.module";
 import WorkspaceSetup from "./modules/wokrspaceSetup/workspaceSetup.module";
 import CommandBus from "./shared/CommandBus";
+import ICommandBus from "./shared/ICommandBus";
+import IQueryBus from "./shared/IQueryBus";
 import QueryBus from "./shared/QueryBus";
 //import { CreateUserCommandHandler } from "./CommandHandlers/CreateUserCommandHandler";
 // /////temporary
@@ -30,7 +32,7 @@ import QueryBus from "./shared/QueryBus";
 // const persistance=new Persistance(connection);
 ////
 export default class Application {
-  constructor(readonly commandBus: CommandBus, readonly queryBus: QueryBus) {}
+  constructor(readonly commandBus: ICommandBus, readonly queryBus: IQueryBus) {}
   start() {  
    
      new Authorization(this.commandBus,this.queryBus).start();

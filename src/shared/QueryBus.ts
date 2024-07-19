@@ -1,7 +1,8 @@
 import { IQuery } from './IQuery';
 import { IQueryHandler } from './IQueryHandler';
+import IQueryBus from './IQueryBus';
 
-export default class QueryBus  {
+export default class QueryBus implements IQueryBus  {
   private handlers = new Map<string, IQueryHandler<IQuery, any>>();
 
   public registerHandler<TQuery extends IQuery, TResult>(
