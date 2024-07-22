@@ -50,8 +50,8 @@ export class CreateCommandHandler
 
       if (method) {
         // Add a new line of code at the end of the method
-        console.log("hello");
-        method.addStatements(`this.commandBus.registerHandler(new ${command.commandName})(), new ${command.commandName}Handler)());`);
+
+        method.addStatements(`this.commandBus.registerHandler(new ${command.commandName}(), new ${command.commandName}Handler());`);
 
         // Save the changes to the file
         sourceFile.saveSync();
