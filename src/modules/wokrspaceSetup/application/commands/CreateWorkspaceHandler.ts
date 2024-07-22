@@ -21,7 +21,6 @@ export class CreateWorkspaceHandler
   async handle(command: CreateWorkspaceCommand): Promise<void> {
     
     const domainName = command.domainName;
-    console.log(domainName);
     this.validate(domainName);
     await this.createDNSDomain(domainName);
     await this.configureRealm(domainName);
@@ -37,7 +36,7 @@ export class CreateWorkspaceHandler
   protected async configureRealm(domainName: string) {
     
 
-    console.log("ddfd"+domainName)
+
 
     const roles = ["Admin", "Agent", "Supervisor"];
     const clientName = "www-client";

@@ -38,10 +38,6 @@ export default class SSO {
   }
 
   private async getAccessToken(): Promise<string> {
-    // if (this.accessToken) {
-    //     return this.accessToken;
-    // }
-
     try {
       const response = await fetch(
         `${this.keycloakUrl}/realms/${this.adminRealm}/protocol/openid-connect/token`,
@@ -128,24 +124,25 @@ export default class SSO {
     email: Email,
     password: Password
   ): Promise<boolean> {
+
+    console.log("to jest" +realmName);
     const createUserUrl = `${this.keycloakUrl}/admin/realms/${realmName}/users`;
     const userData = {
-      username: "new-username",
+      username: username,
       enabled: true,
-      firstName: "First",
-      lastName: "Last",
-      email: "email@example.com",
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
       credentials: [
         {
           type: "password",
-          value: "password",
+          value: password,
           temporary: false,
         },
       ],
     };
 
-
-    const token=this.getAccessToken();
+    const token = this.getAccessToken();
     const response = await fetch(createUserUrl, {
       method: "POST",
       headers: {

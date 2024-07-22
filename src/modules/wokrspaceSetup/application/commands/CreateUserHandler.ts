@@ -19,9 +19,9 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand, voi
   constructor(readonly sso: ISSO, readonly passwordStrategy:IPasswordValidationStrategy) {}
 
   async handle(command: CreateUserCommand): Promise<void> {
-    const { realmName, username, firstName, lastName, email, password } = command;
-    this.validate(command);
 
+    const { realmName, username, firstName, lastName, email, password } = command;
+    //this.validate(command);
 
     const isCreated=await this.sso.createUser(
       realmName,

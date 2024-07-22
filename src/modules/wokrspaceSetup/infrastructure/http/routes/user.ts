@@ -9,6 +9,8 @@ userRouter.post("/", async (req, res) => {
   try {
     const data = await req.json();
     const app = req.locals.app;
+
+ 
     await app
       .getCommandBus()
       .execute(
@@ -21,7 +23,7 @@ userRouter.post("/", async (req, res) => {
           data.password
         )
       );
-    const message = `Workspace created`;
+    const message = `User created`;
     logger.info(message);
     res.status(201).json({ message: message });
   } catch (err: any) {
