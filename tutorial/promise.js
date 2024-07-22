@@ -4,18 +4,18 @@
 
 
 
-async function main() {
+function main() {
     const url = 'https://jsonplaceholder.typicode.com/users';
     //asynchroniczne wywołanie
-     fetch(url)
-        .then(async response => {
+    const result= fetch(url).then( async response => {
             // Sprawdzenie, czy odpowiedź jest poprawna (status 200-299)
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             // Parsowanie odpowiedzi jako JSON
+            console.log(response.body);
             const data =await response.json()
-            console.log(data);   
+         console.log(data);   
             
             
         })
@@ -23,13 +23,17 @@ async function main() {
             // Obsługa błędów
             console.error('Error fetching data:', error);
         });
+        console.log(result);
+        console.log("po fetch")
+
+
 }
 
 
 
 
 
-async function mainAsync() {
+ async function mainAsync() {
 
 
     const url = 'https://jsonplaceholder.typicode.com/users';
@@ -38,11 +42,12 @@ async function mainAsync() {
     if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const data = await response.json();
+    console.log(response);
+    const data =  response.json().then((data)=>{console.log(data)})
     console.log("mainAsync");
     console.log(data);
 }
 
 // Uruchomienie funkcji głównej
-main();
-//mainAsync();
+mainAsync();
+//main();
