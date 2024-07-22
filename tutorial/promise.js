@@ -1,33 +1,45 @@
-async function fetchData(url) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
 
 // Funkcja główna do wykonania kilku żądań
+
+
+
+
 async function main() {
-    const apiUrl = 'https://jsonplaceholder.typicode.com';
+    const url = 'https://jsonplaceholder.typicode.com/users';
+    //asynchroniczne wywołanie
+     fetch(url)
+        .then(response => {
+            // Sprawdzenie, czy odpowiedź jest poprawna (status 200-299)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            // Parsowanie odpowiedzi jako JSON
+            return response.json();
+        })
+        .catch(error => {
+            // Obsługa błędów
+            console.error('Error fetching data:', error);
+        });
+}
 
-    // Wysyłanie równocześnie kilku żądań
-    const usersPromise = fetchData(`${apiUrl}/users`);
-    const postsPromise = fetchData(`${apiUrl}/posts`);
-    const commentsPromise = fetchData(`${apiUrl}/comments`);
 
-    // Oczekiwanie na odpowiedzi
-    const [users, posts, comments] = await Promise.all([usersPromise, postsPromise, commentsPromise]);
 
-    // Wyświetlanie wyników
-    console.log('Users:', users);
-    console.log('Posts:', posts);
-    console.log('Comments:', comments);
+
+
+async function mainAsync() {
+
+
+    const url = 'https://jsonplaceholder.typicode.com/users';
+    //asynchroniczne wywołanie
+    const response = await fetch(url, (response) => { });
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("mainAsync");
+    console.log(data);
 }
 
 // Uruchomienie funkcji głównej
 main();
+//mainAsync();
