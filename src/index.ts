@@ -8,7 +8,6 @@ import workspaceRegister from "./modules/wokrspaceSetup/infrastructure/http/inde
 import dotenv from "dotenv";
 
 dotenv.config();
-const commandBus = new CommandBus();
 const application = new Application(new CommandBus(), new QueryBus());
 application.start();
 

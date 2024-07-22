@@ -1,9 +1,13 @@
 import Authorization from "./modules/authorization/authorization.module";
+import CodeGeneration from "./modules/codeGenaration/codeGeneration.module";
 import WorkspaceSetup from "./modules/wokrspaceSetup/workspaceSetup.module";
 import CommandBus from "./shared/CommandBus";
 import ICommandBus from "./shared/ICommandBus";
 import IQueryBus from "./shared/IQueryBus";
 import QueryBus from "./shared/QueryBus";
+import dotenv from "dotenv";
+const APP_MODE_DEV = "dev";
+dotenv.config();
 //import { CreateUserCommandHandler } from "./CommandHandlers/CreateUserCommandHandler";
 // /////temporary
 // export interface IPersistance {
@@ -12,7 +16,6 @@ import QueryBus from "./shared/QueryBus";
 // }
 
 // class IRepository{}
-
 
 // export class Persistance {
 
@@ -33,16 +36,12 @@ import QueryBus from "./shared/QueryBus";
 ////
 export default class Application {
   constructor(readonly commandBus: ICommandBus, readonly queryBus: IQueryBus) {}
-  start() {  
-   
-     new Authorization(this.commandBus,this.queryBus).start();
-     new WorkspaceSetup(this.commandBus,this.queryBus).start();
-
-
-    // this.commandBus.registerHandler(
-    //   CreateUserCommand,
-    //   new CreateUserCommandHandler(persistance)
-    // );
+  start() {
+    new Authorization(this.commandBus, this.queryBus).start();
+    new WorkspaceSetup(this.commandBus, this.queryBus).start();
+    if (process.env.APP_MODE == APP_MODE_DEV) {
+      new CodeGeneration(this.commandBus, this.queryBus).start();
+    }
   }
 
   getQueryBus() {
