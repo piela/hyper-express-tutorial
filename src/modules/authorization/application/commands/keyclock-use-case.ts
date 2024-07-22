@@ -1,4 +1,4 @@
-import KeycloakSystem from "./KeycloakSystem";
+import KeycloakSystem from "../services/SSO";
 
 
 (async () => {

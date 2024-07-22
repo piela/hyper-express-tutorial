@@ -11,6 +11,8 @@ dotenv.config();
 const commandBus = new CommandBus();
 const application = new Application(new CommandBus(), new QueryBus());
 application.start();
+
+
 const server = new Server();
 
 server.use((req, res, next) => {
@@ -22,6 +24,7 @@ server.use((req, res, next) => {
   logger.info(`Request: ${req.method} ${req.url}`);
   next();
 });
+
 userRegister(server);
 workspaceRegister(server);
 
