@@ -1,21 +1,24 @@
 import { ICommandHandler } from "../../../../shared/ICommandHandler";
-import { UpdateZupaCommand } from "./Commands";
+import { FirstSzablonCommand } from "./Commands";
 import ValidationError from "../../../../shared/Errors/ValidationError";
 import Joi from "joi";
 
-const schema = Joi.object({});
+const schema = Joi.object({
+});
 
-export class UpdateZupaHandler
-  implements ICommandHandler<UpdateZupaCommand, void>
+
+export class  FirstSzablonHandler
+  implements ICommandHandler<FirstSzablonCommand, void>
 {
   constructor() {}
 
-  async handle(command: UpdateZupaCommand): Promise<void> {
+  async handle(command: FirstSzablonCommand): Promise<void> {
     this.validate(command);
-    console.log("UpdateZupaCommand handled");
+    console.log("FirstSzablonCommand handled");
+   
   }
 
-  private validate(command: UpdateZupaCommand): void {
+  private validate(command:FirstSzablonCommand): void {
     const { error } = schema.validate(command, { abortEarly: false });
     if (error) {
       const validationErrors = error.details.map((detail) => detail.message);

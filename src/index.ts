@@ -24,6 +24,7 @@ server.use((req, res, next) => {
   next();
 });
 
+/// wynieść do zewnętrznego pliku
 userRegister(server);
 workspaceRegister(server);
 

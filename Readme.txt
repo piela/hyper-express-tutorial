@@ -1,2 +1,8 @@
 1. Moduły rejestrują handlery
-2. 
+
+
+Przykładowe wywołania komend konsoli
+
+
+npm run console create module Testowy 
+npm run console create command Testowy PrzykladowaCommand 
