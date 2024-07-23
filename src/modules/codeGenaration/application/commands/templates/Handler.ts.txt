@@ -1,0 +1,28 @@
+import { ICommandHandler } from "../../../../shared/ICommandHandler";
+import { {{commandName}} } from "./Commands";
+import ValidationError from "../../../../shared/Errors/ValidationError";
+import Joi from "joi";
+
+const schema = Joi.object({
+});
+
+
+export class  {{commandHandlerName}}
+  implements ICommandHandler<{{commandName}}, void>
+{
+  constructor() {}
+
+  async handle(command: {{commandName}}): Promise<void> {
+    this.validate(command);
+    console.log("{{commandName}} handled");
+   
+  }
+
+  private validate(command:{{commandName}}): void {
+    const { error } = schema.validate(command, { abortEarly: false });
+    if (error) {
+      const validationErrors = error.details.map((detail) => detail.message);
+      throw new ValidationError(validationErrors);
+    }
+  }
+}

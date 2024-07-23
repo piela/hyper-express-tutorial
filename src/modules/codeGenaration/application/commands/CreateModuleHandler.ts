@@ -1,8 +1,10 @@
 import { ICommandHandler } from "../../../../shared/ICommandHandler";
 import { CreateModuleCommand } from "./Commands";
-import Joi, { IpOptions } from "joi";
+import ValidationError from "../../../../shared/Errors/ValidationError";
+import Joi from "joi";
 import fs from "fs";
 import path from "path";
+
 
 const schema = Joi.object({
   name: Joi.string().min(1).required().messages({
@@ -10,13 +12,6 @@ const schema = Joi.object({
   }),
 });
 
-class ValidationError extends Error {
-  constructor(public errors: string[]) {
-    super(errors.join(", "));
-    this.name = "ValidationError";
-    this.errors = errors;
-  }
-}
 
 export class CreateModuleHandler
   implements ICommandHandler<CreateModuleCommand, void>
@@ -32,10 +27,16 @@ export class CreateModuleHandler
     if (!fs.existsSync(modulePath)) {
       fs.mkdirSync(modulePath, { recursive: true });
       fs.mkdirSync(path.join(modulePath, "domain"), { recursive: true });
-      fs.mkdirSync(path.join(modulePath, "application"), { recursive: true });
+      const applicationPath=path.join(modulePath, "application");
+      fs.mkdirSync(applicationPath, { recursive: true });
+      const commandsPath=path.join(applicationPath, "commands"); 
+      fs.mkdirSync(commandsPath, { recursive: true });
       fs.mkdirSync(path.join(modulePath, "infrastructure"), {
         recursive: true,
       });
+
+
+      //create module
       const moduleTemplate = fs.readFileSync(
         path.join(__dirname, "templates", "module.ts.txt"),'utf-8'
       );
@@ -45,6 +46,17 @@ export class CreateModuleHandler
         path.join(modulePath, `${name}.module.ts`),
         moduleTemplate.replace(/{{moduleName}}/g,moduleName)
       );
+
+//create Commands File
+      const commandsTemplate = fs.readFileSync(
+        path.join(__dirname, "templates", "Commands.ts.txt"),'utf-8'
+      );
+
+      fs.writeFileSync(
+        path.join(applicationPath,"Commands","Commands.ts"),commandsTemplate
+      
+      );
+
       console.log(`Module ${name} created successfully.`);
     } else {
       console.error(`Module ${name} already exists.`);
