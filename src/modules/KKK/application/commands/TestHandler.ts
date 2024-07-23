@@ -1,5 +1,5 @@
 import { ICommandHandler } from "../../../../shared/ICommandHandler";
-import { CreateHelloWorldCommand } from "./Commands";
+import { TestCommand } from "./Commands";
 import ValidationError from "../../../../shared/Errors/ValidationError";
 import Joi from "joi";
 
@@ -7,19 +7,18 @@ const schema = Joi.object({
 });
 
 
-export class  CreateHelloWorldHandler
-  implements ICommandHandler<CreateHelloWorldCommand, void>
+export class  TestHandler
+  implements ICommandHandler<TestCommand, void>
 {
   constructor() {}
 
-  async handle(command: CreateHelloWorldCommand): Promise<void> {
+  async handle(command: TestCommand): Promise<void> {
     this.validate(command);
-
-    new Szlaban();
-    this.persistance.save()
+    console.log("TestCommand handled");
+   
   }
 
-  private validate(command:CreateHelloWorldCommand): void {
+  private validate(command:TestCommand): void {
     const { error } = schema.validate(command, { abortEarly: false });
     if (error) {
       const validationErrors = error.details.map((detail) => detail.message);

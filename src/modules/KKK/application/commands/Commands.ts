@@ -1,6 +1,6 @@
 import { ICommand } from "../../../../shared/ICommand";
 
-export class FirstSzablonCommand implements ICommand {
+export class TestCommand implements ICommand {
     constructor() {
     }
 }
