@@ -6,6 +6,8 @@ import logger from "./shared/logger";
 import userRegister from "./modules/authorization/infrastructure/http/index";
 import workspaceRegister from "./modules/wokrspaceSetup/infrastructure/http/index";
 import dotenv from "dotenv";
+import cors from 'cors';
+
 
 dotenv.config();
 const application = new Application(new CommandBus(), new QueryBus());
@@ -23,6 +25,8 @@ server.use((req, res, next) => {
   logger.info(`Request: ${req.method} ${req.url}`);
   next();
 });
+
+server.use(cors());
 
 /// wynieść do zewnętrznego pliku
 userRegister(server);

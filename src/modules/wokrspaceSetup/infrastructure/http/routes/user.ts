@@ -5,6 +5,8 @@ import ValidationError from "../../../../../shared/Errors/ValidationError";
 
 const userRouter = new Router();
 
+
+
 userRouter.post("/", async (req, res) => {
   try {
     const data = await req.json();

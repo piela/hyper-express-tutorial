@@ -24,6 +24,33 @@ const workspaceRouter = new Router();
 //   }
 // });
 
+/**
+ * @swagger
+ * /workspace:
+ *   post:
+ *     summary: Create a new domain
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               domainName:
+ *                 type: string
+ *                 example: example.domain.com
+ *     responses:
+ *       201:
+ *         description: Realm created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Workspace created
+ */
 workspaceRouter.post("/", async (req, res) => {
   try {
     const data = await req.json();
@@ -31,9 +58,9 @@ workspaceRouter.post("/", async (req, res) => {
     await app
       .getCommandBus()
       .execute(new CreateWorkspaceCommand(data.domainName));
-      const message=`Workspace created`
-      logger.info(message);
-      res.status(201).json({ message: message });
+    const message = `Workspace created`;
+    logger.info(message);
+    res.status(201).json({ message: message });
   } catch (err: any) {
     logger.error(err.message);
     if (err instanceof ValidationError) {

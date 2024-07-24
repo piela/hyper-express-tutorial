@@ -7,17 +7,23 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "app": "ts-node-dev --respawn --transpile-only src/index.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "console": "ts-node  --transpile-only src/console.ts"
+    "console": "ts-node  --transpile-only src/console.ts",
+    "openapi": "ts-node-dev  --transpile-only src/openapi.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "commander": "^12.1.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "hyper-express": "^6.16.4",
     "jest": "^29.7.0",
     "joi": "^17.13.3",
     "path": "^0.12.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "winston": "^3.13.1"
   },
   "devDependencies": {
