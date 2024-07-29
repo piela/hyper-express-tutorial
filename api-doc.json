@@ -1,0 +1,57 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test name",
+    "version": "1.0.0",
+    "description": "A simple Hyper-Express API"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/workspace": {
+      "post": {
+        "summary": "Create a new domain",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "domainName": {
+                    "type": "string",
+                    "example": "example.domain.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Realm created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Workspace created"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}

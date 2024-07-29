@@ -3,6 +3,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import dotenv from "dotenv";
+import fs from "fs";
 dotenv.config();
 // Inicjalizacja aplikacji Hyper-Express
 const app = new express();
@@ -13,12 +14,14 @@ app.use(bodyParser.json());
 const env=process.env;
 const serverPort = env.SERVER_PORT!;
 const port = env.OPENAPI_SERVER_PORT!;
-// Konfiguracja Swagger
+const title = env.OPENAPI_TITLE!;
+
+
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'API Example',
+      title: title,
       version: '1.0.0',
       description: 'A simple Hyper-Express API',
     },
@@ -33,6 +36,7 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
+fs.writeFileSync("./api-doc.json",JSON.stringify(swaggerDocs, null, 2));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // // CRUD Endpoints
