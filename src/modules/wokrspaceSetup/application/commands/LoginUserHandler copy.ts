@@ -30,12 +30,12 @@ const schema =Joi.object({
 export class LoginUserHandler
   implements ICommandHandler<LoginUserCommand, string[]>
 {
-  constructor(readonly sso: ISSO) {}
+  constructor(readonly sso: ISSO, readonly subdomainClientName:string, readonly subdomainClientSecret:string) {}
 
   async handle(command: LoginUserCommand): Promise<string[]> {
     const { username, password, realmName } = command;
     this.validate(command);
-    const tokens = await this.sso.loginUser(username, password, realmName);
+    const tokens = await this.sso.loginUser(username, password, realmName,this.subdomainClientName,this.subdomainClientSecret );
     return tokens;
   }
 

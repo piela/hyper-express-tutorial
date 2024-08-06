@@ -16,7 +16,7 @@ const schema = Joi.string()
 export class CreateWorkspaceHandler
   implements ICommandHandler<CreateWorkspaceCommand, void>
 {
-  constructor(readonly sso:ISSO) {}
+  constructor(readonly sso:ISSO, readonly subdomainClientName:string, readonly subdomainClientSecret:string) {}
 
   async handle(command: CreateWorkspaceCommand): Promise<void> {
     
@@ -36,13 +36,14 @@ export class CreateWorkspaceHandler
   protected async configureRealm(domainName: string) {
     
     const roles = ["Admin", "Agent", "Supervisor"];
-    const clientName = "www-client";
 
     const realmExists = await this.sso.realmExists(domainName);
     if (!realmExists) {
       await this.sso.createRealm(domainName);
-      const clientUuid = await this.sso.createClient(domainName, clientName);
+      const clientUuid = await this.sso.createClient(domainName, this.subdomainClientName,this.subdomainClientSecret);
       await this.sso.assignClientRoles(domainName, clientUuid, roles);
+
+      
      // await this.sso.createMapper(domainName, clientUuid);
     } else {
       throw new Error("Realm already exists");

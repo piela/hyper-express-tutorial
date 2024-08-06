@@ -164,7 +164,7 @@ export default class SSO {
     return true;
   }
 
-  async setClientSecret(realm: string, clientId: string, clientSecret: string) {
+  async setClientSecret(realm: string, clientId: string, clientSecret: string): Promise<string[]> {
     const token = await this.getAccessToken();
     const response = await fetch(
       `${this.keycloakUrl}/admin/realms/${realm}/clients/${clientId}/client-secret`,
@@ -182,7 +182,8 @@ export default class SSO {
 
   public async createClient(
     realmName: string,
-    clientId: string
+    clientId: string,
+    clientSecret: string
   ): Promise<string> {
     try {
       const token = await this.getAccessToken();
@@ -198,8 +199,18 @@ export default class SSO {
           body: JSON.stringify({
             clientId,
             enabled: true,
-            publicClient: true,
+            publicClient: false,  // False for confidential clients
             directAccessGrantsEnabled: true,
+            authorizationServicesEnabled: true,
+            serviceAccountsEnabled: true,
+            standardFlowEnabled: true,
+            implicitFlowEnabled: false,
+            bearerOnly: false,
+            consentRequired: false,
+            fullScopeAllowed: true,
+            surrogateAuthRequired: false,
+            clientAuthenticatorType: "client-secret",
+            secret: clientSecret
           }),
         }
       );
@@ -224,14 +235,16 @@ export default class SSO {
   public async loginUser(
     username: string,
     password: string,
-    realmName: string
+    realmName: string,
+    subdomainClientName: string,
+    subdomainClientSecret:string
   ): Promise<string[]> {
-    const keycloakUrl = `${this.keycloakUrl}/realms/master/protocol/openid-connect/token`;
+    const keycloakUrl = `${this.keycloakUrl}/realms/${realmName}/protocol/openid-connect/token`;
     console.log(keycloakUrl);
     const data = new URLSearchParams();
     data.append("grant_type", "password");
-    data.append("client_id", this.adminClientId);
-    data.append("client_secret", this.adminClientSecret);
+    data.append("client_id", subdomainClientName);
+    data.append("client_secret", subdomainClientSecret);
     data.append("username", username);
     data.append("password", password);
     data.append("realm", realmName);

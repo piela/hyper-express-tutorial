@@ -53,12 +53,18 @@ const passwordStrategy = new PasswordStrategy(
   strToBool(env.PASSWORD_MIN_ONE_NUMBER!)
 );
 
+
+
+const subdomainClientName=env.KEYCLOAK_SUBDOMAIN_CLIENT_NAME as string;
+const subdomainClientSecret=env.KEYCLOAK_SUBDOMAIN_CLIENT_SECRET as string;
+
+
 export default class WorkspaceSetup {
   constructor(readonly commandBus: ICommandBus, readonly queryBus: IQueryBus) {}
   start() {
     this.commandBus.registerHandler(
       CreateWorkspaceCommand,
-      new CreateWorkspaceHandler(sso)
+      new CreateWorkspaceHandler(sso,subdomainClientName,subdomainClientSecret)
     );
 
     this.commandBus.registerHandler(
@@ -68,7 +74,7 @@ export default class WorkspaceSetup {
 
     this.commandBus.registerHandler(
       LoginUserCommand,
-      new LoginUserHandler(sso)
+      new LoginUserHandler(sso,subdomainClientName,subdomainClientSecret)
     );
 
     console.log("Module Wrokspace registered");
