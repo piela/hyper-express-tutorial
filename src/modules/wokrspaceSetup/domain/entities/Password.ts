@@ -66,4 +66,9 @@ export default class Password implements IValueObject {
   getValue(): string {
     return this.value;
   }
+
+  toString()
+  {
+    return this.value;
+  }
 }

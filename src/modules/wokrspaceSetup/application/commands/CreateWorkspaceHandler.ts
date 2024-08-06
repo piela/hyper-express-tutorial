@@ -35,9 +35,6 @@ export class CreateWorkspaceHandler
 
   protected async configureRealm(domainName: string) {
     
-
-
-
     const roles = ["Admin", "Agent", "Supervisor"];
     const clientName = "www-client";
 

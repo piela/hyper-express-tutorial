@@ -18,4 +18,10 @@ export default interface ISSO {
     email: Email,
     password: Password
   ): Promise<boolean>;
+
+  loginUser(
+    username: string,
+    password: string,
+    realmName: string
+  ): Promise<string[]>
 }

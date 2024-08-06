@@ -37,7 +37,12 @@ dotenv.config();
 // const persistance=new Persistance(connection);
 ////
 export default class Application {
+
+
+  
   constructor(readonly commandBus: ICommandBus, readonly queryBus: IQueryBus) {}
+
+  
   start() {
     new Authorization(this.commandBus, this.queryBus).start();
     new WorkspaceSetup(this.commandBus, this.queryBus).start();

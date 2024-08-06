@@ -1,7 +1,11 @@
 import { preferences } from "joi";
 import CommandBus from "../../shared/CommandBus";
 import QueryBus from "../../shared/QueryBus";
-import { CreateUserCommand, CreateWorkspaceCommand } from "./application/commands/Commands";
+import {
+  CreateUserCommand,
+  CreateWorkspaceCommand,
+  LoginUserCommand,
+} from "./application/commands/Commands";
 import { CreateWorkspaceHandler } from "./application/commands/CreateWorkspaceHandler";
 import { CreateUserHandler } from "./application/commands/CreateUserHandler";
 
@@ -10,6 +14,7 @@ import IQueryBus from "../../shared/IQueryBus";
 import SSO from "./application/services/SSO";
 import dotenv from "dotenv";
 import { IPasswordValidationStrategy } from "./domain/entities/Password";
+import { LoginUserHandler } from "./application/commands/LoginUserHandler copy";
 dotenv.config();
 
 const env = process.env;
@@ -35,12 +40,12 @@ function strToBool(value: string): boolean {
     return true;
   } else if (value.toLowerCase() === "false") {
     return false;
-  } 
-  else
-  { throw new Error(`Value is nor "true" or "false"`)}
+  } else {
+    throw new Error(`Value is nor "true" or "false"`);
+  }
 }
 
-const passwordStrategy=new PasswordStrategy(
+const passwordStrategy = new PasswordStrategy(
   parseInt(env.PASSWORD_MIN_LENGTH!),
   strToBool(env.PASSWORD_MIN_ONE_UPPERCASE!),
   strToBool(env.PASSWORD_MIN_ONE_LOWERCASE!),
@@ -58,8 +63,14 @@ export default class WorkspaceSetup {
 
     this.commandBus.registerHandler(
       CreateUserCommand,
-      new CreateUserHandler(sso,passwordStrategy)
+      new CreateUserHandler(sso, passwordStrategy)
     );
+
+    this.commandBus.registerHandler(
+      LoginUserCommand,
+      new LoginUserHandler(sso)
+    );
+
     console.log("Module Wrokspace registered");
   }
 

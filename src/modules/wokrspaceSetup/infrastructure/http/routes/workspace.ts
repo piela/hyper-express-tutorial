@@ -54,6 +54,7 @@ const workspaceRouter = new Router();
 workspaceRouter.post("/", async (req, res) => {
   try {
     const data = await req.json();
+
     const app = req.locals.app;
     await app
       .getCommandBus()

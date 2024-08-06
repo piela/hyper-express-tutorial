@@ -7,5 +7,5 @@ export default function registerCommands(application: Application) {
   const command = new Command("create");
   command.addCommand(createModule(application));
   command.addCommand(createCommand(application));
-  return command;
+  return command; 
 }

@@ -124,25 +124,24 @@ export default class SSO {
     email: Email,
     password: Password
   ): Promise<boolean> {
-
-    console.log("to jest" +realmName);
     const createUserUrl = `${this.keycloakUrl}/admin/realms/${realmName}/users`;
     const userData = {
       username: username,
       enabled: true,
       firstName: firstName,
       lastName: lastName,
-      email: email,
+      email: email.getValue(),
       credentials: [
         {
           type: "password",
-          value: password,
+          value: password.getValue(),
           temporary: false,
         },
       ],
     };
 
-    const token = this.getAccessToken();
+    const token = await this.getAccessToken();
+
     const response = await fetch(createUserUrl, {
       method: "POST",
       headers: {
@@ -163,6 +162,22 @@ export default class SSO {
 
     console.log("User created successfully");
     return true;
+  }
+
+  async setClientSecret(realm: string, clientId: string, clientSecret: string) {
+    const token = await this.getAccessToken();
+    const response = await fetch(
+      `${this.keycloakUrl}/admin/realms/${realm}/clients/${clientId}/client-secret`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type: "client_secret", value: clientSecret }),
+      }
+    );
+    return response.json();
   }
 
   public async createClient(
@@ -202,6 +217,42 @@ export default class SSO {
 
       return clientUuid;
     } catch (error: any) {
+      throw error;
+    }
+  }
+
+  public async loginUser(
+    username: string,
+    password: string,
+    realmName: string
+  ): Promise<string[]> {
+    const keycloakUrl = `${this.keycloakUrl}/realms/master/protocol/openid-connect/token`;
+    console.log(keycloakUrl);
+    const data = new URLSearchParams();
+    data.append("grant_type", "password");
+    data.append("client_id", this.adminClientId);
+    data.append("client_secret", this.adminClientSecret);
+    data.append("username", username);
+    data.append("password", password);
+    data.append("realm", realmName);
+
+    console.log(data);
+
+    try {
+      const response = await fetch(keycloakUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: data.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      const tokens = await response.json();
+      return tokens;
+    } catch (error) {
       throw error;
     }
   }
