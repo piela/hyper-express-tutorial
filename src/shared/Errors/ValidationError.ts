@@ -4,5 +4,6 @@ export default class ValidationError extends Error {
       super(errors.join(", "));
       this.name = "ValidationError";
       this.errors = errors;
+      
     }
   }
