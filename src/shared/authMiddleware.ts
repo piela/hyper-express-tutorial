@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 
-const app = new HyperExpress.Server();
 
 interface Token {
   exp: number; // Token expiration time
@@ -63,7 +62,6 @@ function verifyToken(token: string): Token | null {
 
     
     const jsonToken = jwt.decode(token, { complete: true });
-    console.log(jsonToken);
     if (!jsonToken || typeof jsonToken === 'string') {
       throw new Error("Invalid token");
     }
@@ -78,7 +76,7 @@ function verifyToken(token: string): Token | null {
       return null;
     }
 
-    return jsonToken;
+    return jsonToken.payload;
   } catch (error) {
     console.error("Error decoding the token:", error);
     return null;
@@ -100,15 +98,14 @@ export default async function authMiddleware(
 ) {
   const header = req.header("Authorization");
   const token = extractTokenFromHeader(header);
-  console.log(token);
+
   if (!token) {
     res.status(401).json({ message: "Unauthorized" });
     return null;
   }
-  console.log(token);
+
   const verifiedToken = verifyToken(token);
   if (verifiedToken) {
-    console.log("Token decoded and verified:", verifiedToken);
     req.locals.token = verifiedToken;
     next();
   } else {

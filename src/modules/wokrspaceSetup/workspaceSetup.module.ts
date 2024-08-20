@@ -69,7 +69,7 @@ export default class WorkspaceSetup {
 
     this.commandBus.registerHandler(
       CreateUserCommand,
-      new CreateUserHandler(sso, passwordStrategy)
+      new CreateUserHandler(sso, passwordStrategy,subdomainClientName,subdomainClientSecret)
     );
 
     this.commandBus.registerHandler(

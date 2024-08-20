@@ -6,7 +6,46 @@ import {
 } from "../../../application/commands/Commands";
 import ValidationError from "../../../../../shared/Errors/ValidationError";
 import authMiddleware from "../../../../../shared/authMiddleware";
+import grantsMiddelware from "../../../../../shared/grantsMiddleware";
 const userRouter = new Router();
+
+/**
+ * @swagger
+ * /user/test-grants:
+ *   post:
+ *     summary: Test grants in route
+ *     description: This endpoint is protected and requires both a valid JWT token in the Authorization header.
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       201:
+ *         description: User has the right to access this route.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: "user has right"
+ *       401:
+ *         description: Unauthorized access due to missing, invalid, or expired token, or incorrect password.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ */
+userRouter.post("/test-grants", authMiddleware,grantsMiddelware(["user/test-grants","User:get","Superadmin","Admin","Suprvisor","User"]), async (req, res) => {
+  res.status(201).json("user has right");
+});
+
+
+
+
+
 /**
  * @swagger
  * /user/test-secure:
@@ -57,13 +96,13 @@ userRouter.post("/test-secure", authMiddleware, async (req, res) => {
  *             properties:
  *               username:
  *                 type: string
- *                 example: user123
+ *                 example: 'user@example.com'
  *               password:
  *                 type: string
- *                 example: password123
+ *                 example: '1User@example.com'
  *               realmName:
  *                 type: string
- *                 example: exampleRealm
+ *                 example: 'asa.domain.com'
  *     responses:
  *       201:
  *         description: Successfully authenticated
@@ -140,6 +179,7 @@ userRouter.post("/login", async (req, res) => {
  *                username:
  *                  type: string
  *                  description: The user's username
+ *                  example: 'user@example.com'    
  *                firstName:
  *                  type: string
  *                  description: The user's first name
@@ -150,9 +190,15 @@ userRouter.post("/login", async (req, res) => {
  *                  type: string
  *                  format: email
  *                  description: The user's email address
+ *                  example: 'user@example.com'      
  *                password:
  *                  type: string
  *                  description: The user's password
+ *                  example: 1User@example.com     
+ *                roleName:
+ *                  type: string
+ *                  description: The user's role
+ *                  example: 'Admin' 
  *              required:
  *                - realmName
  *                - username
@@ -160,6 +206,7 @@ userRouter.post("/login", async (req, res) => {
  *                - lastName
  *                - email
  *                - password
+ *                - roleName
  *      responses:
  *        '201':
  *          description: User created successfully
@@ -214,7 +261,8 @@ userRouter.post("/", async (req, res) => {
           data.firstName,
           data.lastName,
           data.email,
-          data.password
+          data.password,
+          data.roleName
         )
       );
     const message = `User created`;

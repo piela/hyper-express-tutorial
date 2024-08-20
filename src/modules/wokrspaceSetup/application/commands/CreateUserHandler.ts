@@ -4,7 +4,9 @@ import Joi from "joi";
 import ValidationError from "../../../../shared/Errors/ValidationError";
 import ISSO from "../services/ISSO";
 import Email from "../../domain/entities/Email";
-import Password, { IPasswordValidationStrategy } from "../../domain/entities/Password";
+import Password, {
+  IPasswordValidationStrategy,
+} from "../../domain/entities/Password";
 
 const schema = Joi.string()
   .pattern(/^(?=.{1,253}$)((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,63}$/)
@@ -15,15 +17,40 @@ const schema = Joi.string()
     "any.required": "Domain name is required",
   });
 
-export class CreateUserHandler implements ICommandHandler<CreateUserCommand, void> {
-  constructor(readonly sso: ISSO, readonly passwordStrategy:IPasswordValidationStrategy) {}
+export class CreateUserHandler
+  implements ICommandHandler<CreateUserCommand, void>
+{
+  constructor(
+    readonly sso: ISSO,
+    readonly passwordStrategy: IPasswordValidationStrategy,
+    readonly subdomainClientName: string,
+    readonly subdomainClientSecret: string
+  ) {}
 
   async handle(command: CreateUserCommand): Promise<void> {
-
-    const { realmName, username, firstName, lastName, email, password } = command;
+    const {
+      realmName,
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+      roleName,
+    } = command;
     //this.validate(command);
 
-    const isCreated=await this.sso.createUser(
+    const clientUUID = await this.sso.getClientUUID(
+      this.subdomainClientName,
+      realmName
+    );
+
+    const role = await this.sso.getClientRole(
+      roleName,
+      realmName,
+      this.subdomainClientName
+    );
+
+    const userId = await this.sso.createUser(
       realmName,
       username,
       firstName,
@@ -31,9 +58,10 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand, voi
       new Email(email),
       new Password(password, this.passwordStrategy)
     );
+
+    console.log(userId);
+    await this.sso.addClientRoleToUser(userId, clientUUID, role, realmName);
   }
-
-
 
   private validate(command: CreateUserCommand): void {
     const { error } = schema.validate(command, {

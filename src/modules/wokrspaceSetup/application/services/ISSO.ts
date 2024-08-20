@@ -21,8 +21,8 @@ export default interface ISSO {
     lastName: string,
     email: Email,
     password: Password
-  ): Promise<boolean>;
-
+  ): Promise<any>;
+  getClientUUID(clientId: string, realmName: string): Promise<string>;
   loginUser(
     username: string,
     password: string,
@@ -37,5 +37,17 @@ export default interface ISSO {
     clientSecret: string
   ): Promise<string[]>;
 
+  addClientRoleToUser(
+    userId: string,
+    clientUUID: string,
+    role: { id: string; name: string },
+    realmName: string
+  ): Promise<boolean>;
+
+  getClientRole(
+    roleName: string,
+    realmName: string,
+    clientName: string
+  ): Promise<{ id: string; name: string }>;
   getCert(realmName: string): Promise<string>;
 }
