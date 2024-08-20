@@ -5,28 +5,23 @@ export default function grantsMiddelware(grants: Array<String>) {
     res: HyperExpress.Response,
     next: Function
   ) => {
-
-    const token=req.locals.token;
+    const token = req.locals.token;
 
     if (!token) {
-      res.status(401).json({ message: "Unauthorized" });
+      res.status(403).json({ message: "Forbidden" });
       return null;
     }
 
-   
-    const roles=token.resource_access['www-client'].roles; 
+    const roles = token.resource_access["www-client"].roles;
     const hasGrant = roles.some((element: string) => {
       return grants.includes(element);
     });
-    
-    if(hasGrant) {
-      next();
-    }
 
-    if (!req.locals.token.roles) {
-      res.status(401).json({ message: "Unauthorized" });
+    if (hasGrant) {
+      next();
+    } else {
+      res.status(403).json({ message: "Forbidden" });
       return null;
     }
-   
   };
 }
