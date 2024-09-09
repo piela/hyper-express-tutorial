@@ -7,6 +7,7 @@ import IQueryBus from "./shared/IQueryBus";
 import QueryBus from "./shared/QueryBus";
 import dotenv from "dotenv";
 import KKK from "./modules/KKK/KKK.module";
+import Szlaban from "./modules/Szlaban/Szlaban.module";
 
 const APP_MODE_DEV = "dev";
 dotenv.config();
@@ -50,6 +51,7 @@ export default class Application {
       new CodeGeneration(this.commandBus, this.queryBus).start();
     }
       new KKK(this.commandBus, this.queryBus).start();
+      new Szlaban(this.commandBus, this.queryBus).start();
 
   
 
