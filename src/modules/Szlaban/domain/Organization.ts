@@ -1,12 +1,12 @@
 import { Id } from "../../../shared/domain/Id";
-import Address from "./Address";
+import Address from "../../../shared/domain/Address";
 
 export default class Organization {
   constructor(
     readonly id: Id<Organization>,
-    name: string,
-    nip: string,
-    type: string,
+    readonly name: string,
+    readonly nip: string,
+    readonly type: string,
     readonly address: Address
   ) {}
 }

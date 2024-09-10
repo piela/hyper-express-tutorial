@@ -1,6 +1,6 @@
 import InvoiceItem from "./InvoiceItem";
 import { Id } from "../../../shared/domain/Id";
-import Address from "./Address";
+import Address from "../../../shared/domain/Address";
 class AggregateRoot {}
 
 export default class Invoice extends AggregateRoot {
@@ -15,11 +15,14 @@ export default class Invoice extends AggregateRoot {
   }
 
   addInoviceItem(invoiceItem: InvoiceItem) {
+    if (invoiceItem.name == "Stare Pierniki" && invoiceItem.quantity > 4) {
+      throw new Error();
+    }
     this.invoiceItems.push(invoiceItem);
   }
 }
 
-// //////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 // const invoice = new Invoice(
 //   new Id(),
@@ -46,4 +49,4 @@ export default class Invoice extends AggregateRoot {
 // } else {
 //   invoice.addInoviceItem(invoiceItem2);
 // }
-// //invoice.save();
+//invoice.save();
